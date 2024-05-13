@@ -1,13 +1,6 @@
 
--- 20 Hz min hearing 20kHz max
--- select octave, triave, etc
--- beginning with 20, double/triple to divide the range into octaves
--- store each in a row
--- divide each of those subranges by the EDO val
--- output a matrix which is the number of octaves long, each with the EDO number of notes
-
-local min_hz = 20.0
-local max_hz = 20000.0
+local min_hz = 20
+local max_hz = 20000
 
 local ntave = tonumber(arg[1])
 local edo = tonumber(arg[2])
@@ -23,36 +16,32 @@ function divide_range()
     local ntaves = {}
     while start < max_hz do
         table.insert(ntaves, start)
-        start = start * 2
+        start = start * ntave
     end
     local ntave_notes = {}
-    for i, start in pairs(ntaves) do
-        if i < count(ntaves) - 1 then
-            print(ntaves[i])
-            local fin = ntaves[i + 1] 
-            print(fin)
-            local range = fin - start
-            local step = range/edo
-            local intervals = { start }
-            for n = 1, edo - 1 do
-                start = start + step
-                table.insert(intervals, start) 
-            end
-            table.insert(ntaves, intervals)
+    for i = 1, #ntaves - 1 do
+        local start = ntaves[i]
+        local fin = ntaves[i + 1] 
+        local step = (fin - start) / edo
+        local intervals = { start }
+        for n = 1, edo - 1 do
+            start = start + step
+            table.insert(intervals, start) 
         end
+        table.insert(ntave_notes, intervals)
     end
     return ntave_notes
 end
 
+-- TODO this gets its own function
 local notes = divide_range()
-for i, ntave in ipairs(notes) do
-    print(i..":")
-    for j, note in ipairs(ntave) do
-        print(note)
+for i = 1, #notes do
+    io.write(i..": ")
+    for j = 1, #notes[i] do
+        local freq = string.format("%.2f", notes[i][j])
+        io.write(freq.."Hz ")
     end
-    print("\n")
+    io.write("\n")
 end
 
 
--- function find_harmonies
--- function find_melodies
