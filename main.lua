@@ -12,6 +12,12 @@ local max_hz = 20000.0
 local ntave = tonumber(arg[1])
 local edo = tonumber(arg[2])
 
+function count(ntaves) 
+    local count = 0
+    for _ in pairs(ntaves) do count = count + 1 end
+    return count
+end
+
 function divide_range()
     local start = min_hz
     local ntaves = {}
@@ -20,11 +26,12 @@ function divide_range()
         start = start * 2
     end
     local ntave_notes = {}
-    for i, start in ipairs(ntaves) do
-        if i < #ntaves - 1 then do
-            print(ntaves[i+1])
+    for i, start in pairs(ntaves) do
+        if i < count(ntaves) - 1 then
+            print(ntaves[i])
             local fin = ntaves[i + 1] 
-            local range = tonumber(fin) - start
+            print(fin)
+            local range = fin - start
             local step = range/edo
             local intervals = { start }
             for n = 1, edo - 1 do
@@ -34,7 +41,6 @@ function divide_range()
             table.insert(ntaves, intervals)
         end
     end
-end
     return ntave_notes
 end
 
