@@ -1,40 +1,24 @@
 
-local min_hz = 20
-local max_hz = 20000
+min_hz = 20
+max_hz = 20000
 
-local ntave = tonumber(arg[1])
-local edo = tonumber(arg[2])
+local edo = require("edo")
+local tet = require("tet")
 
-function count(ntaves) 
-    local count = 0
-    for _ in pairs(ntaves) do count = count + 1 end
-    return count
+local mode = tostring(arg[1])
+local harmonic = tonumber(arg[2])
+local division = tonumber(arg[3])
+
+local notes = {}
+-- TODO: divideRange functions are very similar, try to DRY
+if string.match(mode, "edo") then
+    notes = edo.divideRange(harmonic, division)
+elseif string.match(mode, "tet") then
+    notes = tet.divideRange(harmonic, division)
 end
 
-function divide_range()
-    local start = min_hz
-    local ntaves = {}
-    while start < max_hz do
-        table.insert(ntaves, start)
-        start = start * ntave
-    end
-    local ntave_notes = {}
-    for i = 1, #ntaves - 1 do
-        local start = ntaves[i]
-        local fin = ntaves[i + 1] 
-        local step = (fin - start) / edo
-        local intervals = { start }
-        for n = 1, edo - 1 do
-            start = start + step
-            table.insert(intervals, start) 
-        end
-        table.insert(ntave_notes, intervals)
-    end
-    return ntave_notes
-end
-
--- TODO this gets its own function
-local notes = divide_range()
+-- TODO Export to some object or file?
+-- For now, print them to the terminal.
 for i = 1, #notes do
     io.write(i..": ")
     for j = 1, #notes[i] do
