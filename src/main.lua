@@ -1,6 +1,7 @@
 
 min_hz = 20
 max_hz = 20000
+-- TODO Changeable reference frequency (eg A4 = 440)
 
 local edo = require("edo")
 local tet = require("tet")
